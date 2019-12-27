@@ -107,7 +107,7 @@ def write_instance_to_example_files(instances, tokenizer, max_seq_length,
     input_ids = tokenizer.convert_tokens_to_ids(instance.tokens)
     input_mask = [1] * len(input_ids)
     segment_ids = list(instance.segment_ids)
-    assert len(input_ids) <= max_seq_length
+    assert len(input_ids) <= max_seq_length, len(input_ids)
 
     while len(input_ids) < max_seq_length:
       input_ids.append(0)
@@ -259,7 +259,9 @@ def create_instances_from_document(
         # (first) sentence.
         a_end = 1
         if len(current_chunk) >= 2:
-          a_end = rng.randint(1, len(current_chunk) - 1)
+          # use all segment
+          # a_end = rng.randint(1, len(current_chunk) - 1)
+          a_end = len(current_chunk) - 1
 
         tokens_a = []
         for j in range(a_end):
@@ -268,7 +270,9 @@ def create_instances_from_document(
         tokens_b = []
         # Random next
         is_random_next = False
-        if len(current_chunk) == 1 or rng.random() < 0.5:
+        # if len(current_chunk) == 1 or rng.random() < 0.5:
+        ## without next_segment
+        if False:
           is_random_next = True
           target_b_length = target_seq_length - len(tokens_a)
 
@@ -299,7 +303,7 @@ def create_instances_from_document(
         truncate_seq_pair(tokens_a, tokens_b, max_num_tokens, rng)
 
         assert len(tokens_a) >= 1
-        assert len(tokens_b) >= 1
+        # assert len(tokens_b) >= 1
 
         tokens = []
         segment_ids = []
@@ -312,11 +316,14 @@ def create_instances_from_document(
         tokens.append("[SEP]")
         segment_ids.append(0)
 
+        ## without tokens_b
+        """
         for token in tokens_b:
           tokens.append(token)
           segment_ids.append(1)
         tokens.append("[SEP]")
         segment_ids.append(1)
+        """
 
         (tokens, masked_lm_positions,
          masked_lm_labels) = create_masked_lm_predictions(

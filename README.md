@@ -1,3 +1,9 @@
+# bert_mlm
+- This script is derived from [BERT script](https://github.com/google-research/bert).
+    - Use MLM only.
+    - Input unit is one sentence.
+    - For Japanese tokenization, comment out the Chinese tokenization.
+
 # BERT
 
 **\*\*\*\*\* New May 31st, 2019: Whole Word Masking Models \*\*\*\*\***
